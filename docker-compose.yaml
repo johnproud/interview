@@ -1,0 +1,31 @@
+version: "3.8"
+services:
+  interview-main-app:
+    build: .
+    ports:
+      - "8080:8080"
+    command: bash -c '
+      flask db upgrade head
+      && flask seed-db
+      && flask run --host=0.0.0.0 --port 8080
+      '
+
+  interview-db:
+    image: postgres:12.0-alpine
+    volumes:
+      - interview-postgres-data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env
+    expose:
+      - 5437
+    ports:
+      - 5437:5437
+    command:
+      - "postgres"
+      - "-c"
+      - "port=5437"
+
+
+
+volumes:
+  interview-postgres-data:
